@@ -1,0 +1,15 @@
+# Use transcriptome data tranin the pipeline.
+funannotate train -i  tssy_chr.softmasked.fasta -o tssy   --left YYT*/*1.fq.gz --right YYT*/*2.fq.gz --stranded RF --max_intronlen 50000 --species "tssy" --cpus 128 --pasa_db mysql 
+
+#Use cds (create by Helixer) to predict the genome
+funannotate predict -i tssy_chr.softmasked.fasta -o tssy --name  Tssy  -s "tssy" --busco_seed_species arabidopsis --weights codingquarry:1 GeneMark:3 --optimize_augustus --busco_db embryophyta --max_intronlen 50000 --organism other --transcript_evidence tssy_helixer.cds.fa --cpus 128   
+
+#update the prediction results
+funannotate update -i tssy --cpus 128 --pasa_db mysql 
+
+# use interproscan-5.40-77.0 to generate the interprscan annotation
+interproscan.sh -dp -i tssy.proteins.fa -f XML -o tssy.interprscan.xml -cpu 128
+#annotate the genome
+funannotate annotate -i tssy  --cpus 120 --busco_db embryophyta --iprscan tssy.interprscan.xml
+
+
