@@ -1,0 +1,17 @@
+#Builddatabe for the genome
+BuildDatabase -name tssy -engine ncbi tssy_chr.fasta
+
+#Use RepeatModeler to generate repeat units
+RepeatModeler -engine ncbi -pa 120 -database tssy -LTRStruct 
+
+#Combine RepeatMasker library and RepeatModeler identified repeat units
+cat RepeatMaskerLib.fasta RM_*/consensi.fa.classified > combined_repeat_libs.fasta
+
+#Use RepeatMasker to annotate the genome
+RepeatMasker -e ncbi -gff -pa 56  -lib combined_repeat_libs.fasta -dir . tssy.chr.fasta
+
+#Get the repeat annotate summary
+buildSummary.pl -species Embryophyta  tssy.chr.fasta.out  > tssy.repeatannotate.summary
+
+#Get the softmasked genome for the gene prediction
+bedtools maskfasta -soft -fi  tssy.chr.fasta -bed tssy.chr.fasta.out.gff -fo tssy.chr.softmasked.fasta
