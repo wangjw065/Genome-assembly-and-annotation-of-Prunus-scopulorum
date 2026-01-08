@@ -1,0 +1,10 @@
+#NECAT
+necat.pl bridge 313tssy.cfg(config file of necat)
+#Medaka
+seqkit fq2fa -o 313tssy.ont.fa  -j 64 313tssy.ont.fastq  # you may need to install seqkit, to get fasta file from fastq file
+medaka_consensus -i <fasta file of your ont reads> -d <contig from NECAT> -m r941_prom_high_g344 -t 64 -b 80 -o <your path to>/medaka 
+#Nextpolish
+nextPolish  run-tssy.cfg(config file of nextpolish)
+#Purge_dups
+pd_config.py  <fasta file of your ont reads> ontfofn
+run_purge_dups.py config.json <yourpathto>/purge_dups/bin <name of your project> -p bash
